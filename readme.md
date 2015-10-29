@@ -1,10 +1,10 @@
-# Log-x
+# Log-X
 
-Log-x it's a simple PSR-3 compliant logger with ability to duplicate output to stdout.
+Log-X it's a simple PSR-3 compliant logger with ability to duplicate log entries to stdout.
 
 ### Installation
 
-Log-x requires PHP >= 5.4
+Log-X requires PHP >= 5.4
 
 ```
 composer require idealogica/log-x:~1.0.0
@@ -27,4 +27,4 @@ composer require idealogica/log-x:~1.0.0
 
 ### License
 
-Log-x is licensed under a [MIT License](https://opensource.org/licenses/MIT).
+Log-X is licensed under a [MIT License](https://opensource.org/licenses/MIT).
