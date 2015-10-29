@@ -1,6 +1,6 @@
 # Log-x
 
-Log-x it's a simple PSR-3 compliant logger with ability to dublicate output to stdout.
+Log-x it's a simple PSR-3 compliant logger with ability to duplicate output to stdout.
 
 ### Installation
 
