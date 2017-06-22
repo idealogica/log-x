@@ -8,6 +8,20 @@ use Psr\Log\InvalidArgumentException;
 class LogX extends AbstractLogger
 {
     /**
+     * Log file name.
+     *
+     * @var string
+     */
+    protected $fileName = '';
+
+    /**
+     * Shows that log file should be truncated before log session.
+     *
+     * @var string
+     */
+    protected $truncateFile = '';
+
+    /**
      * File resource.
      *
      * @var resource
@@ -32,17 +46,14 @@ class LogX extends AbstractLogger
      * Constructor.
      *
      * @param string $fileName
-     * @param bool $trucateFile
+     * @param bool $truncateFile
      *
      * @throws Exception
      */
-    public function __construct($fileName, $trucateFile = true)
+    public function __construct($fileName, $truncateFile = true)
     {
-        $this->logFile = fopen($fileName, $trucateFile ? 'w' : 'a');
-        if($this->logFile === false)
-        {
-            throw new Exception("Can't create file ".$fileName." to log into.");
-        }
+        $this->fileName = $fileName;
+        $this->truncateFile = $truncateFile;
     }
 
     /**
@@ -50,13 +61,16 @@ class LogX extends AbstractLogger
      */
     public function __destruct()
     {
-        fclose($this->logFile);
+        if ($this->logFile) {
+            fclose($this->logFile);
+        }
     }
 
     /**
      * Enables echo output to stdout.
      *
      * @param bool $enable
+     *
      * @return $this
      */
     public function enableStdoutEcho($enable = true)
@@ -69,6 +83,7 @@ class LogX extends AbstractLogger
      * Enables timestamp output.
      *
      * @param bool $enable
+     *
      * @return $this
      */
     public function enableTimeOutput($enable = true)
@@ -78,110 +93,24 @@ class LogX extends AbstractLogger
     }
 
     /**
-     * {@inheritdoc}
+     * Logs with an arbitrary level.
      *
-     * @throws InvalidArgumentException
-     */
-    public function emergency($message, array $context = array())
-    {
-        parent::emergency($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
      *
-     * @throws InvalidArgumentException
-     */
-    public function alert($message, array $context = array())
-    {
-        parent::alert($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function critical($message, array $context = array())
-    {
-        parent::critical($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function error($message, array $context = array())
-    {
-        parent::error($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function warning($message, array $context = array())
-    {
-        parent::warning($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function notice($message, array $context = array())
-    {
-        parent::notice($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function info($message, array $context = array())
-    {
-        parent::info($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     */
-    public function debug($message, array $context = array())
-    {
-        parent::debug($message, $context);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
+     * @return null
      * @throws InvalidArgumentException
      */
     public function log($level, $message, array $context = [])
     {
-        if(!$level)
-        {
+        if (!$level) {
             throw new InvalidArgumentException('Log level must be specified');
         }
-        if(!$message)
-        {
+        if (!$message) {
             throw new InvalidArgumentException('Message must be specified');
         }
-        if(!defined('Psr\Log\LogLevel::'.strtoupper($level)))
-        {
+        if (!defined('Psr\Log\LogLevel::' . strtoupper($level))) {
             throw new InvalidArgumentException('Unknown log level');
         }
         $logMsg = '';
@@ -193,15 +122,31 @@ class LogX extends AbstractLogger
             $this->stdoutEcho;
         $exceptionMsg =
             !empty($context['exception']) && $context['exception'] instanceof Exception ?
-                ' ('.$context['exception']->getMessage().')' :
+                ' (' . $context['exception']->getMessage() . ')' :
                 '';
-        $logMsg .= $timeOutput ? date('Y-m-d H:i:s').' ' : '';
-        $logMsg .= '['.$level.'] '.(string)$message.$exceptionMsg."\n";
-        fwrite($this->logFile, $logMsg);
-        if($stdoutEcho)
-        {
+        $logMsg .= $timeOutput ? date('Y-m-d H:i:s') . ' ' : '';
+        $logMsg .= '[' . $level . '] ' . (string)$message . $exceptionMsg . "\n";
+        fwrite($this->getLogFileResource(), $logMsg);
+        if ($stdoutEcho) {
             echo($logMsg);
         }
-        return $this;
+        return null;
+    }
+
+    /**
+     * Returns log file resource.
+     *
+     * @return resource
+     * @throws Exception
+     */
+    protected function getLogFileResource()
+    {
+        if (!$this->logFile) {
+            $this->logFile = @fopen($this->fileName, $this->truncateFile ? 'w' : 'a');
+            if ($this->logFile === false) {
+                throw new Exception("Can't create file " . $this->fileName . " to log into.");
+            }
+        }
+        return $this->logFile;
     }
 }

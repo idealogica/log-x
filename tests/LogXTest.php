@@ -8,16 +8,16 @@ class LogXTest extends PHPUnit_Framework_TestCase
     public function testPsrMethods()
     {
         vfsStream::setup();
-        (new LogX('vfs://root/test.log'))->
-            alert('alert')->
-            critical('critical')->
-            debug('debug')->
-            emergency('emergency')->
-            error('error')->
-            info('info')->
-            notice('notice')->
-            warning('warning')->
-            log(LogLevel::ALERT, 'log');
+        $logX = new LogX('vfs://root/test.log');
+        $logX->alert('alert');
+        $logX->critical('critical');
+        $logX->debug('debug');
+        $logX->emergency('emergency');
+        $logX->error('error');
+        $logX->info('info');
+        $logX->notice('notice');
+        $logX->warning('warning');
+        $logX->log(LogLevel::ALERT, 'log');
         $logContents = file_get_contents('vfs://root/test.log');
         self::assertContains('alert', $logContents);
         self::assertContains('critical', $logContents);
@@ -76,16 +76,16 @@ class LogXTest extends PHPUnit_Framework_TestCase
     {
         vfsStream::setup();
         echo("\n\n");
-        (new LogX('vfs://root/test.log'))->
-            enableStdoutEcho()->
-            alert('alert')->
-            critical('critical')->
-            debug('debug')->
-            emergency('emergency')->
-            error('error')->
-            info('info')->
-            notice('notice')->
-            warning('warning')->
-            log(LogLevel::ALERT, 'message', ['time_output' => false]);
+        $logX = new LogX('vfs://root/test.log');
+        $logX->enableStdoutEcho();
+        $logX->alert('alert');
+        $logX->critical('critical');
+        $logX->debug('debug');
+        $logX->emergency('emergency');
+        $logX->error('error');
+        $logX->info('info');
+        $logX->notice('notice');
+        $logX->warning('warning');
+        $logX->log(LogLevel::ALERT, 'message', ['time_output' => false]);
     }
 }

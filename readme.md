@@ -7,22 +7,23 @@ Log-X it's a simple PSR-3 compliant logger with ability to duplicate log entries
 Log-X requires PHP >= 5.4
 
 ```
-composer require idealogica/log-x:~1.0.0
+composer require idealogica/log-x:~1.1
 ```
 
 ### Example
 
 ```
-(new Idealogica\LogX('test.log', false))->
-    enableStdoutEcho()->
-    alert('Alert message')->
-    critical('Critial message')->
-    debug('Debug message')->
-    emergency('Emergency message')->
-    error('Error message', ['exception' => new \Exception('Kind of exception!')])->
-    info('Info message')->
-    notice('Notice message', ['time_output' => false])->
-    warning('Warning message', ['stdout_echo' => false]);
+$logX = new LogX('vfs://root/test.log');
+$logX->enableStdoutEcho();
+$logX->alert('alert');
+$logX->critical('critical');
+$logX->debug('debug');
+$logX->emergency('emergency');
+$logX->error('error');
+$logX->info('info');
+$logX->notice('notice');
+$logX->warning('warning');
+$logX->log(LogLevel::ALERT, 'message', ['time_output' => false]);
 ```
 
 ### License
