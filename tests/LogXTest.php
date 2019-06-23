@@ -1,10 +1,14 @@
 <?php
 use Idealogica\LogX;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use org\bovigo\vfs\vfsStream;
 
-class LogXTest extends PHPUnit_Framework_TestCase
+class LogXTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testPsrMethods()
     {
         vfsStream::setup();
@@ -30,6 +34,9 @@ class LogXTest extends PHPUnit_Framework_TestCase
         self::assertContains('log', $logContents);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testTimeOutput()
     {
         vfsStream::setup();
@@ -45,6 +52,9 @@ class LogXTest extends PHPUnit_Framework_TestCase
         self::assertEquals("[alert] message\n", $logContents);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testStdoutEcho()
     {
         vfsStream::setup();
@@ -61,6 +71,9 @@ class LogXTest extends PHPUnit_Framework_TestCase
         self::assertEquals("[alert] message\n", $logContents);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testLogAppend()
     {
         vfsStream::setup();
@@ -72,6 +85,9 @@ class LogXTest extends PHPUnit_Framework_TestCase
         self::assertNotEmpty($logContents);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testFormatting()
     {
         vfsStream::setup();
